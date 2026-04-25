@@ -23,6 +23,13 @@ class TransactionOut(BaseModel):
     updated_at: datetime
 
 
+class PaginatedTransactions(BaseModel):
+    items: list[TransactionOut]
+    total: int
+    page: int
+    limit: int
+
+
 class TransactionCreate(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
