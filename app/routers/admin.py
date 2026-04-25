@@ -8,6 +8,7 @@ from app.core.dependencies import policy_required
 from app.models.user.user import User
 from app.repositories.user_repo import UserRepository
 from app.schemas.user import UserOut
+from app.services.admin_service import AdminService
 
 router = APIRouter(prefix="/admin", tags=["admin"])
 
@@ -18,6 +19,5 @@ async def list_users(
     skip: int = 0,
     limit: int = 100,
 ):
-    repo = UserRepository(db)
-    users = await repo.get_all(skip=skip, limit=limit)
-    return [UserOut.model_validate(u) for u in users]
+    service = AdminService(db)
+    return await service.get_all_users(skip=skip, limit=limit)
