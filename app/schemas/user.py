@@ -3,8 +3,7 @@ from datetime import datetime
 from decimal import Decimal
 
 from pydantic import BaseModel, ConfigDict, EmailStr
-
-from app.models.auth.role import Role
+from app.schemas.role import RoleOut
 
 
 class UserCreate(BaseModel):
@@ -21,7 +20,7 @@ class UserOut(BaseModel):
     name: str
     surname: str
     email: str
-    role: Role
+    role: RoleOut
 
 
 class UserInDB(BaseModel):
@@ -32,6 +31,6 @@ class UserInDB(BaseModel):
     name: str
     surname: str
     hashed_password: str
-    role: Role
+    role: RoleOut
     is_active: bool
     created_at: datetime
