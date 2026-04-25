@@ -1,7 +1,8 @@
 from sqlalchemy import select
 from sqlalchemy.orm import Session
+from fastapi import HTTPException, status
 
-from app.core.security import hash_password, verify_password, create_access_token
+from app.core.security import hash_password, verify_password, create_access_token, decode_token, is_token_expired
 from app.models.auth.role import Role
 from app.repositories.user_repo import UserRepository
 from app.schemas.auth import Token
@@ -31,7 +32,6 @@ class AuthService:
     async def login(self, email: str, password: str) -> Token:
         user = await self.repo.get_by_email(email)
         if not user or not verify_password(password, user.hashed_password):
-            from fastapi import HTTPException, status
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Invalid credentials",
@@ -40,3 +40,25 @@ class AuthService:
 
         access_token = create_access_token(data={"sub": str(user.id), "role": user.role.name})
         return Token(access_token=access_token)
+
+    async def refresh(self, token: str) -> Token:
+        invalid_token_exception = HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Token is invalid",
+            )
+        if token is None:
+            raise invalid_token_exception
+
+        payload = decode_token(token)
+        if payload is None:
+            raise invalid_token_exception
+
+        user = await self.repo.get_by_email(payload.email)
+        if user is None:
+            raise invalid_token_exception
+
+        if is_token_expired(payload):
+            raise invalid_token_exception
+
+        new_access_token = create_access_token(data={"sub": str(user.id), "role": user.role.name})
+        return Token(access_token=new_access_token)

@@ -34,3 +34,9 @@ def decode_token(token: str) -> TokenPayload | None:
         )
     except JWTError:
         return None
+
+
+def is_token_expired(token: TokenPayload) -> bool:
+    current_time = datetime.now(timezone.utc)
+    token_date = datetime.fromtimestamp(token.exp, tz=timezone.utc)
+    return token_date < current_time
