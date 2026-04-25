@@ -17,6 +17,7 @@ class UserRepository:
         self.db.add(user)
         self.db.flush()
         self.db.refresh(user)
+        self.db.commit()
         return user
 
     async def get_by_email(self, email: str) -> User | None:
