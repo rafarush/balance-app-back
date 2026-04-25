@@ -3,6 +3,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.core.database import Base
 from app.models.auth.role_policy import RolePolicy
+from app.models.auth.policy import Policy
 
 
 class Role(Base):

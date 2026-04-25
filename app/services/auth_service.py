@@ -1,3 +1,4 @@
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.core.security import hash_password, verify_password, create_access_token
@@ -22,7 +23,9 @@ class AuthService:
             )
 
         hashed = hash_password(user_data.password)
-        user = await self.repo.create_user(email=user_data.email, hashed_password=hashed)
+        role = self.db.execute(select(Role).where(Role.name == "User")).scalar_one_or_none()
+        user = await self.repo.create_user(email=user_data.email, hashed_password=hashed, name=user_data.name,
+                                           surname=user_data.surname, role=role)
         return UserOut.model_validate(user)
 
     async def login(self, email: str, password: str) -> Token:
@@ -35,5 +38,5 @@ class AuthService:
                 headers={"WWW-Authenticate": "Bearer"},
             )
 
-        access_token = create_access_token(data={"sub": str(user.id), "role": user.role.value})
+        access_token = create_access_token(data={"sub": str(user.id), "role": user.role.name})
         return Token(access_token=access_token)

@@ -14,8 +14,8 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
 
 
 async def get_current_user(
-    token: Annotated[str, Depends(oauth2_scheme)],
-    db: Annotated[Session, Depends(get_db)],
+        token: Annotated[str, Depends(oauth2_scheme)],
+        db: Annotated[Session, Depends(get_db)],
 ) -> User:
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
@@ -48,3 +48,14 @@ def require_admin(current_user: User = Depends(get_current_user)) -> User:
             detail="Admin access required",
         )
     return current_user
+
+
+def policy_required(policy_name: str):
+    async def check_policy(current_user: User = Depends(get_current_user)) -> User:
+        if policy_name not in current_user.polices:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="You don't have the required policy to access this resource",
+            )
+        return current_user
+    return check_policy
