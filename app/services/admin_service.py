@@ -9,6 +9,6 @@ class AdminService:
         self.db = db
         self.repo = UserRepository(db)
 
-    async def get_all_users(self, skip: int = 0, limit: int = 100):
+    async def get_all_users(self, skip: int = 0, limit: int = 100) -> list[UserOut]:
         users = await self.repo.get_all(skip=skip, limit=limit)
         return [UserOut.model_validate(u) for u in users]
