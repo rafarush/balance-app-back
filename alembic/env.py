@@ -5,6 +5,7 @@ from alembic import context
 import os
 from dotenv import load_dotenv
 
+from app.core.config import get_settings
 from app.core.database import Base
 # Models
 from app.models.user.user import User
@@ -14,12 +15,17 @@ from app.models.auth.role_policy import RolePolicy
 from app.models.transaction.transaction_category import TransactionCategory
 from app.models.transaction.transaction import Transaction
 
+# settings = get_settings()
+#
+# db_url = settings.get_db_url
+# if not db_url:
+#     from dotenv import load_dotenv
+#     load_dotenv()
+#     db_url = os.getenv("DATABASE_URL")
 
-db_url = os.environ.get("DATABASE_URL")
-if not db_url:
-    from dotenv import load_dotenv
-    load_dotenv()
-    db_url = os.getenv("DATABASE_URL")
+settings = get_settings()
+db_url = settings.get_db_url
+
 
 config = context.config
 
