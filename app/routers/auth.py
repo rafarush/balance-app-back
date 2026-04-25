@@ -14,8 +14,8 @@ router = APIRouter(prefix="/auth", tags=["auth"])
 
 @router.post("/register", response_model=UserOut, status_code=status.HTTP_201_CREATED)
 async def register(
-    user_data: UserCreate,
-    db: Annotated[Session, Depends(get_db)],
+        user_data: UserCreate,
+        db: Annotated[Session, Depends(get_db)],
 ):
     service = AuthService(db)
     return await service.register(user_data)
@@ -23,8 +23,17 @@ async def register(
 
 @router.post("/login", response_model=Token)
 async def login(
-    form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
-    db: Annotated[Session, Depends(get_db)],
+        form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
+        db: Annotated[Session, Depends(get_db)],
 ):
     service = AuthService(db)
     return await service.login(form_data.username, form_data.password)
+
+
+@router.post("/refresh", response_model=Token)
+async def refresh(
+        token: str,
+        db: Annotated[Session, Depends(get_db)],
+):
+    service = AuthService(db)
+    return await service.refresh(token)

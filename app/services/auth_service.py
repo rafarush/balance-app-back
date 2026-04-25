@@ -1,8 +1,11 @@
+import uuid
+
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 from fastapi import HTTPException, status
 
-from app.core.security import hash_password, verify_password, create_access_token, decode_token, is_token_expired
+from app.core.security import hash_password, verify_password, create_access_token, decode_token, is_token_expired, \
+    create_refresh_token
 from app.models.auth.role import Role
 from app.repositories.user_repo import UserRepository
 from app.schemas.auth import Token
@@ -39,13 +42,14 @@ class AuthService:
             )
 
         access_token = create_access_token(data={"sub": str(user.id), "role": user.role.name})
-        return Token(access_token=access_token)
+        refresh_token = create_refresh_token(data={"sub": str(user.id), "role": user.role.name})
+        return Token(access_token=access_token, refresh_token=refresh_token)
 
     async def refresh(self, token: str) -> Token:
         invalid_token_exception = HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Token is invalid",
-            )
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Token is invalid",
+        )
         if token is None:
             raise invalid_token_exception
 
@@ -53,7 +57,12 @@ class AuthService:
         if payload is None:
             raise invalid_token_exception
 
-        user = await self.repo.get_by_email(payload.email)
+        try:
+            user_id = uuid.UUID(payload.sub)
+        except ValueError:
+            raise invalid_token_exception
+
+        user = await self.repo.get_by_id(user_id)
         if user is None:
             raise invalid_token_exception
 
@@ -61,4 +70,5 @@ class AuthService:
             raise invalid_token_exception
 
         new_access_token = create_access_token(data={"sub": str(user.id), "role": user.role.name})
-        return Token(access_token=new_access_token)
+        new_refresh_token = create_refresh_token(data={"sub": str(user.id), "role": user.role.name})
+        return Token(access_token=new_access_token, refresh_token=new_refresh_token)
