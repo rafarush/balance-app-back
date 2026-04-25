@@ -4,6 +4,7 @@ WORKDIR /app
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     gcc \
+    libc6-dev \
     libpq-dev \
     curl \
     && rm -rf /var/lib/apt/lists/*
@@ -20,6 +21,7 @@ RUN chmod +x scripts/entrypoint.sh
 
 EXPOSE 8000
 
+ENTRYPOINT ["scripts/entrypoint.sh"]
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
 
 

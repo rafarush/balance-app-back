@@ -15,8 +15,12 @@ from app.models.transaction.transaction_category import TransactionCategory
 from app.models.transaction.transaction import Transaction
 
 
-load_dotenv()
-db_url = os.getenv("DATABASE_URL")
+db_url = os.environ.get("DATABASE_URL")
+if not db_url:
+    from dotenv import load_dotenv
+    load_dotenv()
+    db_url = os.getenv("DATABASE_URL")
+
 config = context.config
 
 if db_url:
