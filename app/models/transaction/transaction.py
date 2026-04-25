@@ -28,5 +28,5 @@ class Transaction(Base):
     occurred_at: Mapped[datetime] = mapped_column(default=lambda: datetime.now(tz=timezone.utc), nullable=False)
 
     user: Mapped["User"] = relationship("User", back_populates="transactions")
-    category: Mapped["TransactionCategory"] = relationship("Category", back_populates="transactions")
+    transaction_category: Mapped["TransactionCategory"] = relationship("TransactionCategory", back_populates="transactions")
 

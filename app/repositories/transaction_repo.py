@@ -25,7 +25,7 @@ class TransactionRepository:
             user_id=user_id,
             type=type,
             amount=amount,
-            category=category,
+            transaction_category=category,
             description=description,
             occurred_at=occurred_at,
         )

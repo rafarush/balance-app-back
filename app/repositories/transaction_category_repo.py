@@ -29,3 +29,8 @@ class TransactionCategoryRepo:
         query = query.order_by(TransactionCategory.name.asc())
         result = self.db.execute(query)
         return list(result.scalars().all())
+
+    async def get_by_id(self, id: uuid) -> TransactionCategory:
+        result = self.db.execute(select(TransactionCategory)
+                                 .where(TransactionCategory.id == id))
+        return result.scalar_one_or_none()

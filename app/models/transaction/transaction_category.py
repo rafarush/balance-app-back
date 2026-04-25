@@ -13,4 +13,5 @@ class TransactionCategory(Base):
     description: Mapped[str | None] = mapped_column(String(255), nullable=True)
     parent: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("user.id"), nullable=False)
 
-    # user: Mapped["User"] = relationship("User", back_populates="transactions_category")
+    transactions: Mapped["Transaction"] = relationship("Transaction", back_populates="transaction_category")
+
