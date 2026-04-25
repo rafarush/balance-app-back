@@ -76,7 +76,7 @@ def upgrade() -> None:
     op.create_index(op.f('ix_user_surname'), 'user', ['surname'], unique=True)
     op.create_table('transactions',
     sa.Column('user_id', sa.UUID(), nullable=False),
-    sa.Column('type', sa.Enum('INCOME', 'OUTCOME', name='transactiontype'), nullable=False),
+    sa.Column('type', sa.Enum('INCOME', 'OUTCOME', name='transactiontype', create_type=False), nullable=False),
     sa.Column('amount', sa.Numeric(precision=10, scale=2), nullable=False),
     sa.Column('category_id', sa.UUID(), nullable=False),
     sa.Column('description', sa.String(length=500), nullable=True),
