@@ -27,7 +27,7 @@ class TransactionService:
             )
         now = datetime.now(tz=timezone.utc)
         transaction = await self.repo.create(user_id=user_id,
-                                             category=category,
+                                             category_id=category.id,
                                              type=transaction_in.type,
                                              amount=transaction_in.amount,
                                              description=transaction_in.description,

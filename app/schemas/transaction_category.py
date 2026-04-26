@@ -15,3 +15,9 @@ class TransactionCategoryOut(BaseModel):
     id: uuid.UUID
     name: str
     description: str
+
+
+class TransactionCategoryFlattenedOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    name: str

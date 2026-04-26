@@ -17,7 +17,7 @@ class User(Base):
     role_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("role.id"), nullable=False)
 
     role: Mapped["Role"] = relationship("Role", back_populates="users")
-    transactions: Mapped["Transactions"] = relationship("Transaction", back_populates="user")
+    transactions: Mapped["Transaction"] = relationship("Transaction", back_populates="user")
 
     @property
     def polices(self) -> list[str]:

@@ -5,7 +5,7 @@ from decimal import Decimal
 from pydantic import BaseModel, ConfigDict
 
 from app.models.transaction.transaction import TransactionType
-from app.schemas.transaction_category import TransactionCategoryOut
+from app.schemas.transaction_category import TransactionCategoryOut, TransactionCategoryFlattenedOut
 from app.schemas.user import UserOut
 
 
@@ -21,6 +21,15 @@ class TransactionOut(BaseModel):
     occurred_at: datetime
     created_at: datetime
     updated_at: datetime
+
+
+class TransactionFlattenedOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    id: uuid.UUID
+    type: TransactionType
+    amount: Decimal
+    transaction_category: TransactionCategoryFlattenedOut
+    occurred_at: datetime
 
 
 class PaginatedTransactions(BaseModel):

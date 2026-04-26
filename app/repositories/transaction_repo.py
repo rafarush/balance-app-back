@@ -19,7 +19,7 @@ class TransactionRepository:
             user_id: uuid.UUID,
             type: TransactionType,
             amount: Decimal,
-            category: TransactionCategory,
+            category_id: uuid.UUID,
             description: str | None,
             occurred_at: datetime,
     ) -> Transaction:
@@ -27,13 +27,11 @@ class TransactionRepository:
             user_id=user_id,
             type=type,
             amount=amount,
-            transaction_category=category,
+            category_id=category_id,
             description=description,
             occurred_at=occurred_at,
         )
         self.db.add(transaction)
-        self.db.flush()
-        self.db.refresh(transaction)
         self.db.commit()
         return transaction
 
