@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
 
-from app.routers import auth, admin, transaction_category, transaction
+from app.routers import auth, admin, transaction_category, transaction, dashboard
 
 app = FastAPI(
     title="Balance App",
@@ -17,6 +17,7 @@ app.add_middleware(
 )
 
 app.include_router(auth.router)
+app.include_router(dashboard.router)
 app.include_router(transaction_category.router)
 app.include_router(transaction.router)
 app.include_router(admin.router)

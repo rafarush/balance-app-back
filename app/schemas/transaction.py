@@ -38,3 +38,11 @@ class TransactionCreate(BaseModel):
     category_id: uuid.UUID
     description: str
     occurred_at: datetime
+
+
+class BalanceOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    balance: Decimal
+    total_incomes: Decimal
+    total_outcomes: Decimal

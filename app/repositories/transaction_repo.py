@@ -73,3 +73,39 @@ class TransactionRepository:
 
         return list(transactions), total
 
+    async def get_last_n_by_type(
+        self, user_id: uuid.UUID, tx_type: TransactionType, n: int = 10
+    ) -> list[Transaction]:
+        query = (
+            select(Transaction)
+            .where(Transaction.user_id == user_id)
+            .where(Transaction.type == tx_type)
+            .order_by(Transaction.occurred_at.desc())
+            .limit(n)
+        )
+        result = self.db.execute(query)
+        return list(result.scalars().all())
+
+    async def get_balance_summary(
+        self, user_id: uuid.UUID
+    ) -> Tuple[Decimal, Decimal, Decimal]:
+        incomes_result = self.db.execute(
+            select(func.coalesce(func.sum(Transaction.amount), 0)).where(
+                Transaction.user_id == user_id,
+                Transaction.type == TransactionType.INCOME,
+            )
+        )
+        total_incomes = incomes_result.scalar() or Decimal("0")
+
+        outcomes_result = self.db.execute(
+            select(func.coalesce(func.sum(Transaction.amount), 0)).where(
+                Transaction.user_id == user_id,
+                Transaction.type == TransactionType.OUTCOME,
+            )
+        )
+        total_outcomes = outcomes_result.scalar() or Decimal("0")
+
+        balance = total_incomes - total_outcomes
+
+        return balance, total_incomes, total_outcomes
+

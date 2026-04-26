@@ -9,7 +9,7 @@ from starlette import status
 from app.models.transaction.transaction import TransactionType
 from app.repositories.transaction_category_repo import TransactionCategoryRepo
 from app.repositories.transaction_repo import TransactionRepository
-from app.schemas.transaction import TransactionCreate, TransactionOut, PaginatedTransactions
+from app.schemas.transaction import TransactionCreate, TransactionOut, PaginatedTransactions, BalanceOut
 
 
 class TransactionService:
